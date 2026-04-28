@@ -15,10 +15,11 @@ describe('useCart', () => {
     jest.clearAllMocks();
   });
 
-  test('starts with loading true and cart null', () => {
+  test('starts with loading true and cart null', async () => {
     const { result } = renderHook(() => useCart(), { wrapper });
     expect(result.current.loading).toBe(true);
     expect(result.current.cart).toBeNull();
+    await waitFor(() => expect(result.current.loading).toBe(false));
   });
 
   test('fetches cart on mount', async () => {

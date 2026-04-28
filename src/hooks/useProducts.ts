@@ -28,9 +28,9 @@ export function useProducts(options: UseProductsOptions = {}): UseProductsResult
       setError(null);
       let response: Response;
       if (options.category) {
-        response = await client.products().category(options.category);
+        response = await client.products().byCategory(options.category);
       } else if (options.tag) {
-        response = await client.products().tag(options.tag);
+        response = await client.products().byTag(options.tag);
       } else {
         response = await client.products().all(options.filters);
       }

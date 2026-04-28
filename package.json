@@ -43,7 +43,7 @@
     }
   },
   "devDependencies": {
-    "@cocartheadless/sdk": "^1.0.0",
+    "@cocartheadless/sdk": "file:../TypeScript",
     "@testing-library/react-native": "^13.0.0",
     "react-test-renderer": "18.2.0",
     "@types/jest": "^29.0.0",

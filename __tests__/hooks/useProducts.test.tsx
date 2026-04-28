@@ -15,8 +15,8 @@ beforeEach(() => {
   const MockCoCart = CoCart as jest.MockedClass<typeof CoCart>;
   MockCoCart.prototype.products = jest.fn().mockReturnValue({
     all: mockAll,
-    category: mockCategory,
-    tag: mockTag,
+    byCategory: mockCategory,
+    byTag: mockTag,
   });
 });
 

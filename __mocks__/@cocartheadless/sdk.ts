@@ -28,10 +28,10 @@ const mockProductsResource = {
 };
 
 export class CoCart {
-  restoreSession = jest.fn().mockResolvedValue(undefined);
-  cart = jest.fn().mockReturnValue(mockCartResource);
-  products = jest.fn().mockReturnValue(mockProductsResource);
-  account = jest.fn().mockReturnValue(mockAccountResource);
+  restoreSession() { return Promise.resolve(); }
+  cart() { return mockCartResource; }
+  products() { return mockProductsResource; }
+  account() { return mockAccountResource; }
 }
 
 export class CoCartError extends Error {

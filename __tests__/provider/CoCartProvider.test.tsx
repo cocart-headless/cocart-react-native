@@ -23,30 +23,32 @@ describe('CoCartProvider', () => {
   });
 
   test('calls restoreSession on mount when autoRestoreSession is true', async () => {
-    const instance = new CoCart('https://example.com');
-    await act(async () => {
-      render(
-        <CoCartProvider siteURL="https://example.com">
-          <TestConsumer />
-        </CoCartProvider>,
-      );
-    });
-    expect(instance.restoreSession).not.toThrow();
-  });
-
-  test('does not call restoreSession when autoRestoreSession is false', async () => {
-    const mockRestore = jest.fn();
+    const mockRestore = jest.fn().mockResolvedValue(undefined);
     const MockCoCart = CoCart as jest.MockedClass<typeof CoCart>;
     MockCoCart.prototype.restoreSession = mockRestore;
 
-    await act(async () => {
-      render(
-        <CoCartProvider siteURL="https://example.com" autoRestoreSession={false}>
-          <TestConsumer />
-        </CoCartProvider>,
-      );
-    });
+    render(
+      <CoCartProvider siteURL="https://example.com">
+        <TestConsumer />
+      </CoCartProvider>,
+    );
 
+    await act(async () => {});
+    expect(mockRestore).toHaveBeenCalled();
+  });
+
+  test('does not call restoreSession when autoRestoreSession is false', async () => {
+    const mockRestore = jest.fn().mockResolvedValue(undefined);
+    const MockCoCart = CoCart as jest.MockedClass<typeof CoCart>;
+    MockCoCart.prototype.restoreSession = mockRestore;
+
+    render(
+      <CoCartProvider siteURL="https://example.com" autoRestoreSession={false}>
+        <TestConsumer />
+      </CoCartProvider>,
+    );
+
+    await act(async () => {});
     expect(mockRestore).not.toHaveBeenCalled();
   });
 });

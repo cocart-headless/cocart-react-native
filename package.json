@@ -1,5 +1,5 @@
 {
-  "name": "@cocart/react-native-sdk",
+  "name": "@cocartheadless/react-native-sdk",
   "version": "1.0.0",
   "description": "Official CoCart SDK for React Native",
   "main": "lib/commonjs/index.js",

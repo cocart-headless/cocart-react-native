@@ -1,0 +1,221 @@
+# Account API
+
+The Account API provides access to the authenticated customer's account data — profile, orders, downloads, and reviews. All methods require the customer to be authenticated (Basic Auth or JWT).
+
+Access via the `useAccount()` hook or directly through `useCoCart()`.
+
+## useAccount Hook
+
+`useAccount()` returns stable callbacks for all account operations. Every function returns a `Promise` — `await` it or handle errors in a `try/catch`.
+
+```tsx
+import { useAccount } from '@cocart/react-native-sdk';
+
+function AccountScreen() {
+  const {
+    getProfile,
+    updateProfile,
+    changePassword,
+    getOrders,
+    getOrder,
+    getGuestOrder,
+    getOrderDownloads,
+    getGuestOrderDownloads,
+    getDownloads,
+    getReviews,
+  } = useAccount();
+}
+```
+
+---
+
+## Profile
+
+### Get Profile
+
+```tsx
+const response = await getProfile();
+const profile = response.toObject();
+
+console.log(profile.user.display_name);
+console.log(profile.user.email);
+```
+
+### Update Profile
+
+```tsx
+await updateProfile({
+  first_name: 'Jane',
+  last_name: 'Doe',
+  account_email: 'jane@example.com',
+  // billing / shipping address fields also accepted
+});
+```
+
+### Change Password
+
+```tsx
+await changePassword({
+  current: 'current-password',
+  password: 'new-password',
+  confirm: 'new-password',
+});
+```
+
+The SDK remaps the fields for the API (`current` → `password_current`, `password` → `password_1`, `confirm` → `password_2`) automatically.
+
+---
+
+## Orders
+
+### Get All Orders
+
+```tsx
+const response = await getOrders();
+
+// With pagination and sorting
+const response = await getOrders({ page: 1, per_page: 10, order: 'desc' });
+
+const { orders, totals } = response.toObject() as any;
+```
+
+#### Parameters
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `page` | `number` | Page number |
+| `per_page` | `number` | Orders per page |
+| `order` | `string` | Sort direction (`asc` / `desc`) |
+
+### Get Single Order
+
+```tsx
+const response = await getOrder(123);
+const order = response.toObject() as any;
+console.log(order.order_id, order.status);
+```
+
+### Get Guest Order
+
+Retrieve an order for an unauthenticated customer by order ID and email:
+
+```tsx
+const response = await getGuestOrder(123, 'customer@example.com');
+```
+
+---
+
+## Downloads
+
+### Get Downloads for an Order
+
+```tsx
+const response = await getOrderDownloads(123);
+const downloads = response.toObject() as any[];
+```
+
+### Get Downloads for a Guest Order
+
+```tsx
+const response = await getGuestOrderDownloads(123, 'customer@example.com');
+```
+
+### Get All Downloads
+
+Returns all digital downloads available to the authenticated customer:
+
+```tsx
+const response = await getDownloads();
+const downloads = response.toObject() as any[];
+```
+
+---
+
+## Reviews
+
+Returns all product reviews written by the authenticated customer:
+
+```tsx
+const response = await getReviews();
+const reviews = response.toObject() as any[];
+```
+
+---
+
+## Full Example: Account Screen
+
+```tsx
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { useAccount, CoCartError } from '@cocart/react-native-sdk';
+
+export function AccountScreen() {
+  const { getProfile, getOrders } = useAccount();
+  const [profile, setProfile] = useState<any>(null);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const [profileRes, ordersRes] = await Promise.all([
+          getProfile(),
+          getOrders({ per_page: 5 }),
+        ]);
+        setProfile(profileRes.toObject());
+        setOrders((ordersRes.toObject() as any).orders ?? []);
+      } catch (e) {
+        if (e instanceof CoCartError) {
+          setError(e.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [getProfile, getOrders]);
+
+  if (loading) return <ActivityIndicator />;
+  if (error)   return <Text>Error: {error}</Text>;
+
+  return (
+    <View>
+      <Text>Welcome, {(profile as any)?.user?.display_name}</Text>
+      <Text>Recent Orders</Text>
+      <FlatList
+        data={orders}
+        keyExtractor={(item) => String(item.order_id)}
+        renderItem={({ item }) => (
+          <Text>Order #{item.order_id} — {item.status}</Text>
+        )}
+      />
+    </View>
+  );
+}
+```
+
+---
+
+## Error Handling
+
+All account methods throw `CoCartError` (or a subclass) on failure. The most common scenario is calling account methods without being authenticated:
+
+```tsx
+import { useAccount, AuthenticationError, CoCartError } from '@cocart/react-native-sdk';
+
+async function loadProfile() {
+  try {
+    const response = await getProfile();
+  } catch (e) {
+    if (e instanceof AuthenticationError) {
+      // Redirect to login
+    } else if (e instanceof CoCartError) {
+      // e.errorCode === 'cocart_plugin_required' if the plugin isn't installed
+      console.log(e.message);
+    }
+  }
+}
+```
+
+See [Error Handling](error-handling.md) for the full error hierarchy.

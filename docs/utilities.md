@@ -1,0 +1,127 @@
+# Utilities
+
+Utility classes from `@cocartheadless/sdk` are re-exported directly from this package.
+
+## Currency Formatter
+
+CoCart returns prices as **smallest-unit integers** — cents for USD, pence for GBP, etc. For example, `4599` means $45.99. The `CurrencyFormatter` class converts these into human-readable strings using `Intl.NumberFormat`.
+
+```tsx
+import { CurrencyFormatter } from '@cocart/react-native-sdk';
+
+const fmt = new CurrencyFormatter();
+```
+
+### Formatting Prices
+
+```tsx
+import { useCart, CurrencyFormatter } from '@cocart/react-native-sdk';
+
+function CartTotal() {
+  const { cart } = useCart();
+  const fmt = React.useMemo(() => new CurrencyFormatter(), []);
+
+  if (!cart) return null;
+
+  const currency = cart.getCurrency();
+  const total = cart.get('totals.total') as number;
+
+  return <Text>{fmt.format(total, currency)}</Text>;
+  // => "$45.99"
+}
+```
+
+### Methods
+
+```tsx
+const currency = cart.getCurrency();
+// { currency_code: 'USD', currency_minor_unit: 2, ... }
+
+fmt.format(4599, currency);        // "$45.99"
+fmt.format(100, currency);         // "$1.00"
+fmt.formatDecimal(4599, currency); // "45.99" (no symbol)
+```
+
+### Different Currencies
+
+```tsx
+const eur = { currency_code: 'EUR', currency_minor_unit: 2 };
+fmt.format(1299, eur);  // "€12.99"
+
+const jpy = { currency_code: 'JPY', currency_minor_unit: 0 };
+fmt.format(1500, jpy);  // "¥1,500"
+```
+
+### Custom Locale
+
+```tsx
+const fmt = new CurrencyFormatter('de-DE');
+fmt.format(4599, eur); // "45,99 €"
+```
+
+---
+
+## Validation Functions
+
+Use these to validate user input before calling SDK methods:
+
+```tsx
+import { validateProductId, validateQuantity, validateEmail } from '@cocart/react-native-sdk';
+
+try {
+  validateProductId(productId);
+  validateQuantity(quantity);
+} catch (e) {
+  // ValidationError with descriptive message
+}
+```
+
+---
+
+## Response Transformer
+
+Register a function that runs on every API response before it's returned. Useful for logging, metrics, or data enrichment:
+
+```tsx
+<CoCartProvider
+  siteURL="https://your-store.com"
+  options={{
+    responseTransformer: (response) => {
+      console.log(`[${response.statusCode}] Response`);
+      return response;
+    },
+  }}
+>
+```
+
+Or set at runtime:
+
+```tsx
+const client = useCoCart();
+client.setResponseTransformer((response) => {
+  // Add metadata, format values, etc.
+  return response;
+});
+```
+
+---
+
+## Timezone Helper
+
+Convert dates between timezones — useful when displaying order dates from the store's timezone in the user's local timezone.
+
+```tsx
+import { TimezoneHelper } from '@cocart/react-native-sdk';
+
+const tz = new TimezoneHelper();
+
+// Detect user's timezone
+const userTz = tz.detectTimezone(); // "America/New_York"
+
+// Convert between timezones
+tz.convert('2025-01-15T10:00:00', 'UTC', 'America/New_York');
+// "2025-01-15T05:00:00"
+
+// Convert store time to local time
+tz.toLocal('2025-01-15T10:00:00', 'UTC');
+```

@@ -9,7 +9,7 @@ CoCartError (base)                    — any API error
 ├── AuthenticationError               — login/permission problems (401, 403)
 │   └── TwoFactorAuthRequiredError    — 2FA code required to complete login (401)
 ├── ValidationError                   — bad input (400)
-└── VersionError                      — method requires CoCart Basic (legacy mode)
+└── VersionError                      — method requires CoCart Starter (legacy mode)
 ```
 
 All errors extend `CoCartError`, which extends JavaScript's built-in `Error`. Use `instanceof` to check what kind of error was caught.
@@ -161,7 +161,7 @@ try {
 
 ## Legacy Plugin Version Guard
 
-When using the SDK with `mainPlugin: 'legacy'`, methods that require CoCart Basic throw a `VersionError` before making any network request:
+When using the SDK with `mainPlugin: 'legacy'`, methods that require CoCart Starter throw a `VersionError` before making any network request:
 
 ```tsx
 import { VersionError } from '@cocart/react-native-sdk';
@@ -172,7 +172,7 @@ try {
   await client.products().findBySlug('blue-hoodie');
 } catch (e) {
   if (e instanceof VersionError) {
-    // e.message   => "products()->findBySlug() requires CoCart Basic..."
+    // e.message   => "products()->findBySlug() requires CoCart Starter..."
     // e.errorCode => 'cocart_version_required'
     // e.httpCode  => 0 (no HTTP request was made)
   }

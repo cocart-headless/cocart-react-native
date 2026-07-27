@@ -171,7 +171,7 @@ WordPress exposes its REST API at `/wp-json/` by default. If your site changes t
 
 ## Legacy Plugin Support
 
-To use the SDK with the legacy CoCart plugin (`cart-rest-api-for-woocommerce` v4.x):
+To use the SDK with the CoCart Community plugin (`cart-rest-api-for-woocommerce` v4.x):
 
 ```tsx
 <CoCartProvider
@@ -180,7 +180,7 @@ To use the SDK with the legacy CoCart plugin (`cart-rest-api-for-woocommerce` v4
 >
 ```
 
-Methods that require CoCart Basic will throw a `VersionError` before making any HTTP request. See [Error Handling](error-handling.md#legacy-plugin-version-guard) for details.
+Methods that require CoCart Starter will throw a `VersionError` before making any HTTP request. See [Error Handling](error-handling.md#legacy-plugin-version-guard) for details.
 
 ## Direct Client Access
 

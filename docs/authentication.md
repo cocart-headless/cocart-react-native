@@ -13,7 +13,7 @@ No setup is needed for guest shopping. The SDK manages the session automatically
 3. All subsequent requests send the cart key so the server knows which cart to use.
 
 ```tsx
-import { CoCartProvider, MMKVStorage, useCart } from '@cocart/react-native-sdk';
+import { CoCartProvider, MMKVStorage, useCart } from '@cocartheadless/react-native-sdk';
 
 // Provider persists the cart key via MMKVStorage
 function App() {
@@ -57,7 +57,7 @@ For customers authenticating with their WordPress username and password:
 Or set at runtime after a login form submission:
 
 ```tsx
-import { useCoCart } from '@cocart/react-native-sdk';
+import { useCoCart } from '@cocartheadless/react-native-sdk';
 
 function LoginScreen() {
   const client = useCoCart();
@@ -79,7 +79,7 @@ Requires the [CoCart JWT Authentication](https://wordpress.org/plugins/cocart-jw
 ### Login
 
 ```tsx
-import { useCoCart } from '@cocart/react-native-sdk';
+import { useCoCart } from '@cocartheadless/react-native-sdk';
 
 function LoginScreen() {
   const client = useCoCart();
@@ -115,7 +115,7 @@ client.jwt().setAutoRefresh(true);
 Pass the storage adapter to a `JwtManager` instance so tokens survive restarts:
 
 ```tsx
-import { CoCart, JwtManager, MMKVStorage } from '@cocart/react-native-sdk';
+import { CoCart, JwtManager, MMKVStorage } from '@cocartheadless/react-native-sdk';
 
 const storage = new MMKVStorage();
 const client = new CoCart('https://your-store.com', { storage });
@@ -154,7 +154,7 @@ import {
   useCoCart,
   TwoFactorAuthRequiredError,
   AuthenticationError,
-} from '@cocart/react-native-sdk';
+} from '@cocartheadless/react-native-sdk';
 
 function LoginScreen() {
   const client = useCoCart();

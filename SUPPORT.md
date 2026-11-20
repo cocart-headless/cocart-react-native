@@ -56,7 +56,7 @@ Only the **latest major version** receives active development. Older major versi
 
 ### Core SDK Peer Dependency
 
-This package requires `@cocartheadless/sdk` as a peer dependency. The supported version range is `^1.0.0`. Feature availability depends on the version of `@cocartheadless/sdk` installed.
+This package requires `@cocartheadless/sdk` as a peer dependency. The supported version range is `^1.3.0`. Feature availability depends on the version of `@cocartheadless/sdk` installed.
 
 ## Deprecation Notices
 

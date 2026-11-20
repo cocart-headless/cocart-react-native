@@ -4,7 +4,7 @@
 
 Official React Native SDK for the CoCart REST API. Thin wrapper over `@cocartheadless/sdk` — provides React Native storage adapters, a React Context provider, and React hooks.
 
-- **Package:** `@cocart/react-native-sdk`
+- **Package:** `@cocartheadless/react-native-sdk`
 - **Version:** 1.0.0
 - **Distribution:** npm
 - **Requires:** React Native 0.72+, React 18+
@@ -33,7 +33,7 @@ npm run build                                            # compile via react-nat
 | Runtime | React Native 0.72+ |
 | Tests | Jest 29 + @testing-library/react-native |
 | Build | react-native-builder-bob |
-| Core dependency | `@cocartheadless/sdk` (peer) |
+| Core dependency | `@cocartheadless/sdk` ^1.3.0 (peer) |
 | Storage (optional) | `react-native-mmkv` (fast sync), `@react-native-async-storage/async-storage` (async) |
 
 ---
@@ -54,6 +54,12 @@ src/
     useCart.ts                     # Cart state with auto-fetch
     useCartMutations.ts            # addItem / removeItem / updateItem / clear
     useProducts.ts                 # Products listing with category/tag/filter support
+    useAccount.ts                  # Customer account callbacks (CoCart Plus)
+    useCheckoutClient.ts           # The checkout extension, and the checkout state shared between hooks
+    useCheckout.ts                 # Checkout state with auto-fetch (CoCart Plus 2.0)
+    usePaymentMethods.ts           # Payment methods and saved cards
+    useCheckoutMutations.ts        # update / placeOrder / payForOrder / confirmReturn
+    useOrderReceived.ts            # The order for the thank-you screen
 __tests__/
   storage/
     MMKVStorage.test.ts
@@ -62,6 +68,8 @@ __tests__/
     useCart.test.tsx
     useCartMutations.test.tsx
     useProducts.test.tsx
+    useAccount.test.tsx
+    useCheckout.test.tsx
   provider/
     CoCartProvider.test.tsx
 __mocks__/

@@ -23,7 +23,7 @@ import {
   TwoFactorAuthRequiredError,
   ValidationError,
   VersionError,
-} from '@cocart/react-native-sdk';
+} from '@cocartheadless/react-native-sdk';
 
 try {
   await client.cart().addItem(999, 1);
@@ -54,6 +54,10 @@ try {
 | `errorCode` | `string \| null` | API error code (e.g. `cocart_product_not_found`) |
 | `httpCode` | `number` | HTTP status code (400, 401, 403, 500, etc.) |
 | `responseData` | `Record<string, unknown>` | Full API response body for debugging |
+
+`getCart()` returns the cart sent with an error, or `null` (see [Item No Longer in the Cart](#item-no-longer-in-the-cart)).
+
+Error messages name the method and route (`POST /cocart/v2/cart/add-item: …`), never the full URL, so a guest's cart key or API credentials in the query string don't end up in your logs or crash reports.
 
 ## Error Handling in Hooks
 
@@ -119,7 +123,7 @@ function AddToCartButton({ productId }: { productId: number }) {
 When a customer with 2FA enabled logs in, `client.login()` throws `TwoFactorAuthRequiredError`. Check for it before the broader `AuthenticationError`:
 
 ```tsx
-import { TwoFactorAuthRequiredError, AuthenticationError } from '@cocart/react-native-sdk';
+import { TwoFactorAuthRequiredError, AuthenticationError } from '@cocartheadless/react-native-sdk';
 
 try {
   await client.login('customer@email.com', 'password');
@@ -164,7 +168,7 @@ try {
 When using the SDK with `mainPlugin: 'legacy'`, methods that require CoCart Starter throw a `VersionError` before making any network request:
 
 ```tsx
-import { VersionError } from '@cocart/react-native-sdk';
+import { VersionError } from '@cocartheadless/react-native-sdk';
 
 const client = new CoCart('https://your-store.com', { mainPlugin: 'legacy' });
 
@@ -192,6 +196,43 @@ try {
   }
 }
 ```
+
+## Expired Cart Key
+
+CoCart Starter 5 refuses a cart key with no cart session on every cart route (`404 cocart_invalid_cart`), for example after the cart expired. The client then forgets the stored key and retries the request once as a new guest, so this error doesn't reach your code for a guest; a fresh cart key comes back as usual.
+
+## Item No Longer in the Cart
+
+Getting, updating or removing an item whose key isn't in the cart (for example, another device already removed it) fails with `404 cocart_item_not_in_cart`. Since CoCart Starter 5 the error carries the cart as it is now, so you can show it without fetching the cart again:
+
+```tsx
+try {
+  await updateItem(itemKey, 2);
+} catch (e) {
+  if (e instanceof CoCartError && e.errorCode === 'cocart_item_not_in_cart') {
+    const cart = e.getCart(); // the current cart, or null with CoCart 4.x
+  }
+}
+```
+
+## Quantity Reduced to the Maximum
+
+Adding more than the purchase limit or the stock allows isn't an error: CoCart adds the maximum and says so with a notice.
+
+```tsx
+const response = await addItem(123, 50);
+const notices = response.getNotices().notice ?? []; // ['The quantity of "Beanie" was reduced to 5, the most allowed in the cart.']
+```
+
+## Rate Limits
+
+With rate limiting on (CoCart Plus), every response carries `RateLimit-*` headers:
+
+```tsx
+const { limit, remaining, reset, retryAfter } = response.getRateLimit();
+```
+
+Exceeding the limit returns 429 `rate_limit_exceeded`, which the client retries when `maxRetries` is set.
 
 ## Network / Timeout Errors
 

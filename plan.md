@@ -8,7 +8,7 @@
 
 | Item | Detail |
 |---|---|
-| Package name | `@cocart/react-native-sdk` |
+| Package name | `@cocartheadless/react-native-sdk` |
 | Language | TypeScript |
 | Min React Native | 0.72+ (New Architecture compatible) |
 | Distribution | npm |
@@ -85,7 +85,7 @@ try {
 }
 ```
 
-The `index.ts` barrel must re-export `TwoFactorAuthRequiredError` from the TS SDK so RN consumers can import it directly from `@cocart/react-native-sdk`.
+The `index.ts` barrel must re-export `TwoFactorAuthRequiredError` from the TS SDK so RN consumers can import it directly from `@cocartheadless/react-native-sdk`.
 
 ---
 
@@ -95,14 +95,14 @@ The `index.ts` barrel must re-export `TwoFactorAuthRequiredError` from the TS SD
 
 ```typescript
 // MMKV storage (recommended — synchronous, fast)
-import { MMKVStorage } from '@cocart/react-native-sdk';
+import { MMKVStorage } from '@cocartheadless/react-native-sdk';
 
 const client = new CoCart('https://your-store.com', {
     storage: new MMKVStorage(),
 });
 
 // AsyncStorage fallback (slower, async)
-import { AsyncStorageAdapter } from '@cocart/react-native-sdk';
+import { AsyncStorageAdapter } from '@cocartheadless/react-native-sdk';
 
 const client = new CoCart('https://your-store.com', {
     storage: new AsyncStorageAdapter(),
@@ -112,7 +112,7 @@ const client = new CoCart('https://your-store.com', {
 ### 3.2 React Context Provider
 
 ```tsx
-import { CoCartProvider } from '@cocart/react-native-sdk';
+import { CoCartProvider } from '@cocartheadless/react-native-sdk';
 
 function App() {
     return (
@@ -203,7 +203,7 @@ cocart-react-native-sdk/
 
 ```json
 {
-    "name": "@cocart/react-native-sdk",
+    "name": "@cocartheadless/react-native-sdk",
     "version": "1.0.0",
     "description": "Official CoCart SDK for React Native",
     "main": "lib/commonjs/index.js",

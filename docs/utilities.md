@@ -7,7 +7,7 @@ Utility classes from `@cocartheadless/sdk` are re-exported directly from this pa
 CoCart returns prices as **smallest-unit integers** — cents for USD, pence for GBP, etc. For example, `4599` means $45.99. The `CurrencyFormatter` class converts these into human-readable strings using `Intl.NumberFormat`.
 
 ```tsx
-import { CurrencyFormatter } from '@cocart/react-native-sdk';
+import { CurrencyFormatter } from '@cocartheadless/react-native-sdk';
 
 const fmt = new CurrencyFormatter();
 ```
@@ -15,7 +15,7 @@ const fmt = new CurrencyFormatter();
 ### Formatting Prices
 
 ```tsx
-import { useCart, CurrencyFormatter } from '@cocart/react-native-sdk';
+import { useCart, CurrencyFormatter } from '@cocartheadless/react-native-sdk';
 
 function CartTotal() {
   const { cart } = useCart();
@@ -66,7 +66,7 @@ fmt.format(4599, eur); // "45,99 €"
 Use these to validate user input before calling SDK methods:
 
 ```tsx
-import { validateProductId, validateQuantity, validateEmail } from '@cocart/react-native-sdk';
+import { validateProductId, validateQuantity, validateEmail } from '@cocartheadless/react-native-sdk';
 
 try {
   validateProductId(productId);
@@ -111,7 +111,7 @@ client.setResponseTransformer((response) => {
 Convert dates between timezones — useful when displaying order dates from the store's timezone in the user's local timezone.
 
 ```tsx
-import { TimezoneHelper } from '@cocart/react-native-sdk';
+import { TimezoneHelper } from '@cocartheadless/react-native-sdk';
 
 const tz = new TimezoneHelper();
 

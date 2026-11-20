@@ -7,7 +7,7 @@ For installation instructions and requirements, see the [README](../README.md#in
 The `CoCartProvider` accepts a `options` prop that maps directly to `CoCartOptions` from `@cocartheadless/sdk`. You only need to include the ones relevant to your setup — everything has sensible defaults.
 
 ```tsx
-import { CoCartProvider, MMKVStorage } from '@cocart/react-native-sdk';
+import { CoCartProvider, MMKVStorage } from '@cocartheadless/react-native-sdk';
 
 <CoCartProvider
   siteURL="https://your-store.com"
@@ -37,8 +37,8 @@ import { CoCartProvider, MMKVStorage } from '@cocart/react-native-sdk';
     // API namespace (default: 'cocart')
     namespace: 'cocart',
 
-    // CoCart main plugin: 'basic' (default) or 'legacy'
-    mainPlugin: 'basic',
+    // CoCart main plugin: 'starter' (default) or 'legacy'
+    mainPlugin: 'starter',
 
     // Custom auth header name (default: 'Authorization')
     authHeaderName: 'X-Auth-Token',
@@ -47,6 +47,7 @@ import { CoCartProvider, MMKVStorage } from '@cocart/react-native-sdk';
     debug: true,
   }}
   autoRestoreSession={true}  // default: true — restore cart key on mount and foreground
+  extensions={[]}            // e.g. [createCheckout()] for the checkout hooks (see checkout.md)
 >
   <App />
 </CoCartProvider>
@@ -66,7 +67,7 @@ cd ios && pod install
 ```
 
 ```tsx
-import { MMKVStorage } from '@cocart/react-native-sdk';
+import { MMKVStorage } from '@cocartheadless/react-native-sdk';
 
 <CoCartProvider siteURL="..." options={{ storage: new MMKVStorage() }}>
 ```
@@ -86,7 +87,7 @@ npm install @react-native-async-storage/async-storage
 ```
 
 ```tsx
-import { AsyncStorageAdapter } from '@cocart/react-native-sdk';
+import { AsyncStorageAdapter } from '@cocartheadless/react-native-sdk';
 
 <CoCartProvider siteURL="..." options={{ storage: new AsyncStorageAdapter() }}>
 ```
@@ -102,7 +103,7 @@ new AsyncStorageAdapter('myapp_')
 For testing or when you intentionally do not want session persistence:
 
 ```tsx
-import { MemoryStorage } from '@cocart/react-native-sdk';
+import { MemoryStorage } from '@cocartheadless/react-native-sdk';
 
 <CoCartProvider siteURL="..." options={{ storage: new MemoryStorage() }}>
 ```
@@ -112,7 +113,7 @@ import { MemoryStorage } from '@cocart/react-native-sdk';
 Implement `StorageInterface` from `@cocartheadless/sdk` to use any storage backend:
 
 ```tsx
-import type { StorageInterface } from '@cocart/react-native-sdk';
+import type { StorageInterface } from '@cocartheadless/react-native-sdk';
 
 class SecureStorage implements StorageInterface {
   async get(key: string) {
@@ -131,8 +132,10 @@ class SecureStorage implements StorageInterface {
 
 `CoCartProvider` calls `client.restoreSession()` automatically:
 
-- **On mount** — restores the cart key from storage so the first request sends the correct guest session
-- **On foreground** — when the app returns from background (`AppState === 'active'`), the session is restored again in case storage was updated elsewhere
+- **On mount** — restores the cart key from storage so the first request sends the correct guest session. `useCart` and `useCartMutations` wait for it before their requests; when you call the client yourself as a screen mounts, await `sessionRestored` from `useCoCartContext()` first (see [Hooks](hooks.md#waiting-for-the-stored-cart-key)).
+- **On foreground** — when the app returns from background (`AppState === 'active'`), it reads storage again if the client has no cart key yet
+
+With `MMKVStorage` (synchronous) the client reads the stored key as soon as it's created, so there's no wait. With `AsyncStorageAdapter` the read takes a moment.
 
 To disable automatic restore:
 
@@ -143,7 +146,7 @@ To disable automatic restore:
 You can then call it manually:
 
 ```tsx
-import { useCoCart } from '@cocart/react-native-sdk';
+import { useCoCart } from '@cocartheadless/react-native-sdk';
 
 const client = useCoCart();
 await client.restoreSession();
@@ -187,7 +190,7 @@ Methods that require CoCart Starter will throw a `VersionError` before making an
 Outside of the provider pattern, you can construct and use the client directly for one-off operations:
 
 ```tsx
-import { CoCart, MMKVStorage } from '@cocart/react-native-sdk';
+import { CoCart, MMKVStorage } from '@cocartheadless/react-native-sdk';
 
 const client = new CoCart('https://your-store.com', {
   storage: new MMKVStorage(),

@@ -2,7 +2,7 @@ import React from 'react';
 import { render, act } from '@testing-library/react-native';
 import { Text } from 'react-native';
 import { CoCartProvider } from '../../src/provider/CoCartProvider';
-import { useCoCart } from '../../src/hooks/useCoCart';
+import { useCoCart, useCoCartContext } from '../../src/hooks/useCoCart';
 import { CoCart } from '@cocartheadless/sdk';
 
 jest.mock('@cocartheadless/sdk');
@@ -50,6 +50,46 @@ describe('CoCartProvider', () => {
 
     await act(async () => {});
     expect(mockRestore).not.toHaveBeenCalled();
+  });
+});
+
+describe('CoCartProvider session restore', () => {
+  test('reads the stored cart key once on mount', async () => {
+    const mockRestore = jest.fn().mockResolvedValue(undefined);
+    const MockCoCart = CoCart as jest.MockedClass<typeof CoCart>;
+    MockCoCart.prototype.restoreSession = mockRestore;
+
+    const { rerender } = render(
+      <CoCartProvider siteURL="https://example.com">
+        <TestConsumer />
+      </CoCartProvider>,
+    );
+    rerender(
+      <CoCartProvider siteURL="https://example.com">
+        <TestConsumer />
+      </CoCartProvider>,
+    );
+
+    await act(async () => {});
+    expect(mockRestore).toHaveBeenCalledTimes(1);
+  });
+
+  test('a storage error settles sessionRestored instead of rejecting', async () => {
+    const MockCoCart = CoCart as jest.MockedClass<typeof CoCart>;
+    MockCoCart.prototype.restoreSession = jest.fn().mockRejectedValue(new Error('storage locked'));
+
+    let restored: Promise<void> | null = null;
+    function Probe() {
+      restored = useCoCartContext().sessionRestored;
+      return null;
+    }
+    render(
+      <CoCartProvider siteURL="https://example.com">
+        <Probe />
+      </CoCartProvider>,
+    );
+
+    await expect(restored).resolves.toBeUndefined();
   });
 });
 

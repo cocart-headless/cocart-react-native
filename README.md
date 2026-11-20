@@ -1,7 +1,7 @@
-# @cocart/react-native-sdk
+# @cocartheadless/react-native-sdk
 
 [![React Native](https://img.shields.io/badge/React%20Native-0.72+-blue?style=for-the-badge&labelColor=000000)](https://reactnative.dev/)
-[![npm version](https://img.shields.io/npm/v/@cocart/react-native-sdk?style=for-the-badge&labelColor=000000)](https://www.npmjs.com/package/@cocart/react-native-sdk)
+[![npm version](https://img.shields.io/npm/v/@cocartheadless/react-native-sdk?style=for-the-badge&labelColor=000000)](https://www.npmjs.com/package/@cocartheadless/react-native-sdk)
 [![Tests](https://img.shields.io/github/actions/workflow/status/cocart-headless/cocart-react-native-sdk/tests.yml?label=tests&style=for-the-badge&labelColor=000000)](https://github.com/cocart-headless/cocart-react-native-sdk/actions/workflows/tests.yml)
 [![License](https://img.shields.io/github/license/cocart-headless/cocart-react-native-sdk?color=9cf&style=for-the-badge&labelColor=000000)](https://github.com/cocart-headless/cocart-react-native-sdk/blob/main/LICENSE)
 
@@ -17,7 +17,7 @@ This SDK is a **thin wrapper** over [`@cocartheadless/sdk`](https://www.npmjs.co
 
 - [ ] Add SDK docs to documentation site
 - [ ] Add support for Cart API extras
-- [ ] Add Checkout API support
+- [x] Add Checkout API support (CoCart Plus 2.0)
 
 ---
 
@@ -27,7 +27,7 @@ It adds three things on top of the core SDK:
 
 - **Storage adapters** — `MMKVStorage` and `AsyncStorageAdapter` so cart sessions and tokens persist across app restarts
 - **`CoCartProvider`** — constructs the client, restores the session on mount and on app foreground
-- **Hooks** — `useCart`, `useCartMutations`, `useProducts`, `useAccount` for idiomatic React Native usage
+- **Hooks** — `useCart`, `useCartMutations`, `useProducts`, `useAccount` for idiomatic React Native usage, plus the checkout hooks (`useCheckout`, `usePaymentMethods`, `useCheckoutMutations`, `useOrderReceived`) with `@cocartheadless/checkout`
 
 All core logic (authentication, cart, products, sessions, JWT, 2FA, account, error handling) is inherited from the TypeScript SDK automatically.
 
@@ -38,7 +38,7 @@ All core logic (authentication, cart, products, sessions, JWT, 2FA, account, err
 - **React Native 0.72+** or **Expo SDK 50+**
 - **React 18+**
 - **CoCart plugin** installed on your WooCommerce store
-- [`@cocartheadless/sdk`](https://www.npmjs.com/package/@cocartheadless/sdk) ^1.0.0 (peer dependency)
+- [`@cocartheadless/sdk`](https://www.npmjs.com/package/@cocartheadless/sdk) ^1.3.0 (peer dependency)
 - [CoCart JWT Authentication](https://wordpress.org/plugins/cocart-jwt-authentication/) plugin (optional, for JWT auth)
 
 ## Support Policy
@@ -50,7 +50,7 @@ See [SUPPORT.md](SUPPORT.md) for our versioning policy and support lifecycle.
 ## Installation
 
 ```bash
-npm install @cocart/react-native-sdk @cocartheadless/sdk
+npm install @cocartheadless/react-native-sdk @cocartheadless/sdk
 ```
 
 ### Optional: Native Storage
@@ -80,7 +80,7 @@ Wrap your app in `CoCartProvider`, then use hooks in any component:
 
 ```tsx
 import React from 'react';
-import { CoCartProvider, MMKVStorage } from '@cocart/react-native-sdk';
+import { CoCartProvider, MMKVStorage } from '@cocartheadless/react-native-sdk';
 import { StorefrontScreen } from './screens/StorefrontScreen';
 
 export default function App() {
@@ -98,7 +98,7 @@ export default function App() {
 ```tsx
 import React from 'react';
 import { View, Text, Button, FlatList } from 'react-native';
-import { useCart, useCartMutations, useProducts } from '@cocart/react-native-sdk';
+import { useCart, useCartMutations, useProducts } from '@cocartheadless/react-native-sdk';
 
 export function StorefrontScreen() {
   const { products, loading: productsLoading } = useProducts();
@@ -110,7 +110,7 @@ export function StorefrontScreen() {
   return (
     <View>
       <FlatList
-        data={products?.toObject() as any[]}
+        data={products?.get<any[]>('products', [])}
         keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <View>
@@ -135,9 +135,10 @@ export function StorefrontScreen() {
 | [Authentication](docs/authentication.md) | Guest, Basic Auth, JWT, 2FA |
 | [Cart API](docs/cart.md) | Add, update, remove items, coupons, shipping |
 | [Products API](docs/products.md) | Browse, filter, categories, tags |
-| [Account API](docs/account.md) | Profile, orders, downloads, reviews |
+| [Account API](docs/account.md) | Profile, orders, downloads, reviews, subscriptions |
+| [Checkout](docs/checkout.md) | Review and update the checkout, place orders and take payment, read the result (3D Secure, off-site steps, payments made after the order), saved cards, the thank-you page, paying for unpaid orders, lost answers (CoCart Plus 2.0) |
 | [Error Handling](docs/error-handling.md) | Error hierarchy, catching errors, 2FA flow |
-| [Hooks Reference](docs/hooks.md) | useCart, useCartMutations, useProducts, useAccount, useCoCart |
+| [Hooks Reference](docs/hooks.md) | useCart, useCartMutations, useProducts, useAccount, useCoCart, the checkout hooks |
 | [Utilities](docs/utilities.md) | Currency formatter, timezone helper |
 
 ---

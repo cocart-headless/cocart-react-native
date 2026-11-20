@@ -3,7 +3,7 @@
 [![React Native](https://img.shields.io/badge/React%20Native-0.72+-blue?style=for-the-badge&labelColor=000000)](https://reactnative.dev/)
 [![npm version](https://img.shields.io/npm/v/@cocartheadless/react-native-sdk?style=for-the-badge&labelColor=000000)](https://www.npmjs.com/package/@cocartheadless/react-native-sdk)
 [![Tests](https://img.shields.io/github/actions/workflow/status/cocart-headless/cocart-react-native-sdk/tests.yml?label=tests&style=for-the-badge&labelColor=000000)](https://github.com/cocart-headless/cocart-react-native-sdk/actions/workflows/tests.yml)
-[![License](https://img.shields.io/github/license/cocart-headless/cocart-react-native-sdk?color=9cf&style=for-the-badge&labelColor=000000)](https://github.com/cocart-headless/cocart-react-native-sdk/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/cocart-headless/cocart-react-native?color=9cf&style=for-the-badge&labelColor=000000)](https://github.com/cocart-headless/cocart-react-native/blob/main/LICENSE)
 
 Official React Native SDK for the [CoCart](https://cocartapi.com) REST API. Build headless WooCommerce storefronts in React Native using simple hooks.
 
@@ -17,7 +17,8 @@ This SDK is a **thin wrapper** over [`@cocartheadless/sdk`](https://www.npmjs.co
 
 - [ ] Add SDK docs to documentation site
 - [ ] Add support for Cart API extras
-- [x] Add Checkout API support (CoCart Plus 2.0)
+- [x] Add Checkout API support — implemented (the [checkout hooks](docs/checkout.md), with `@cocartheadless/checkout`); needs CoCart Plus 2.0, which isn't released yet
+- [x] Add Customers Account API support — implemented ([`useAccount()`](docs/account.md)); needs CoCart Plus 2.0, which isn't released yet
 
 ---
 
@@ -38,6 +39,8 @@ All core logic (authentication, cart, products, sessions, JWT, 2FA, account, err
 - **React Native 0.72+** or **Expo SDK 50+**
 - **React 18+**
 - **CoCart plugin** installed on your WooCommerce store
+- **CoCart Plus 2.0** for the account and checkout hooks (not released yet)
+- [`@cocartheadless/checkout`](https://www.npmjs.com/package/@cocartheadless/checkout) (optional peer dependency, for the checkout hooks)
 - [`@cocartheadless/sdk`](https://www.npmjs.com/package/@cocartheadless/sdk) ^1.3.0 (peer dependency)
 - [CoCart JWT Authentication](https://wordpress.org/plugins/cocart-jwt-authentication/) plugin (optional, for JWT auth)
 
@@ -135,8 +138,8 @@ export function StorefrontScreen() {
 | [Authentication](docs/authentication.md) | Guest, Basic Auth, JWT, 2FA |
 | [Cart API](docs/cart.md) | Add, update, remove items, coupons, shipping |
 | [Products API](docs/products.md) | Browse, filter, categories, tags |
-| [Account API](docs/account.md) | Profile, orders, downloads, reviews, subscriptions |
-| [Checkout](docs/checkout.md) | Review and update the checkout, place orders and take payment, read the result (3D Secure, off-site steps, payments made after the order), saved cards, the thank-you page, paying for unpaid orders, lost answers (CoCart Plus 2.0) |
+| [Account API](docs/account.md) | Registration, profile, password, addresses, orders, downloads, reviews and subscriptions (needs CoCart Plus 2.0, not released yet) |
+| [Checkout](docs/checkout.md) | Review and update the checkout, place orders and take payment, read the result (3D Secure, off-site steps, payments made after the order), saved cards, the thank-you page, paying for unpaid orders, lost answers (needs CoCart Plus 2.0, not released yet) |
 | [Error Handling](docs/error-handling.md) | Error hierarchy, catching errors, 2FA flow |
 | [Hooks Reference](docs/hooks.md) | useCart, useCartMutations, useProducts, useAccount, useCoCart, the checkout hooks |
 | [Utilities](docs/utilities.md) | Currency formatter, timezone helper |

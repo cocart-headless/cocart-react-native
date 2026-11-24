@@ -23,7 +23,7 @@ function makeCheckout() {
     placeOrder: jest.fn().mockResolvedValue(complete),
     payForOrder: jest.fn().mockResolvedValue(complete),
     confirmReturn: jest.fn().mockResolvedValue(complete),
-    getPaymentMethods: jest.fn().mockResolvedValue(response({ payment_methods: [{ id: 'stripe', title: 'Credit card' }] })),
+    getPaymentMethods: jest.fn().mockResolvedValue(response([{ id: 'stripe', title: 'Credit card' }])),
     getSavedPaymentMethods: jest.fn().mockResolvedValue([
       { id: 7, gatewayId: 'stripe', label: 'Visa ending in 4242', type: 'CC', expires: '12/2030', isDefault: true, supportsSubscriptions: true },
     ]),
@@ -141,7 +141,7 @@ describe('checkout hooks', () => {
     const { result } = renderHook(() => usePaymentMethods({ gateway: 'stripe' }), { wrapper });
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(checkout.getSavedPaymentMethods).toHaveBeenCalledWith('stripe');
-    expect(result.current.methods).toEqual({ payment_methods: [{ id: 'stripe', title: 'Credit card' }] });
+    expect(result.current.methods).toEqual([{ id: 'stripe', title: 'Credit card' }]);
     expect(result.current.savedCards).toHaveLength(1);
     expect(result.current.savedCards[0].id).toBe(7);
   });

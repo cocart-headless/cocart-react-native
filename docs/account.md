@@ -78,9 +78,10 @@ console.log(customer.display_name);
 console.log(customer.email);
 console.log(customer.billing?.formatted); // the billing address on one line
 console.log(customer.stats.orders_count);
+console.log(customer.recent_orders);     // the most recent orders, newest first ([] when none)
 ```
 
-Every account response says what it is in `object` (`customer`, `order`, `subscription`…). A change puts what it did first, in `result` (a `code` and a `message`), and `actions` lists what can be done next.
+Every account response says what it is in `object` (`customer`, `order`, `subscription`…). A change puts what it did first, in `result` (a `code` and a `message`). An order or subscription has `allowed_actions`: the names of what the customer may do with it now (`pay`, `cancel`…).
 
 ### Update Profile
 
@@ -133,7 +134,7 @@ orders[0].id;           // 1042
 orders[0].number;       // '1042'
 orders[0].status.code;  // 'completed' (use this in code)
 orders[0].status.label; // 'Completed' (translated, for display)
-orders[0].totals.total; // '6450' (minor units)
+orders[0].total;        // '6450' (minor units)
 pagination.total_items; // also in the X-WP-Total header
 ```
 
@@ -158,6 +159,8 @@ const order = response.toObject();
 console.log(order.id, order.status.code);
 console.log(order.total_lines);           // [{ key, label, amount, detail }], in display order
 console.log(order.payment.needs_payment); // true while it can still be paid
+console.log(order.downloads);             // the files this order can download
+console.log(order.allowed_actions);       // e.g. ['pay', 'cancel']
 ```
 
 Someone else's order, or one that doesn't exist, is `404 cocart_order_not_found`.
@@ -191,14 +194,14 @@ The files one order can download (`GET my-account/orders/{id}/downloads`):
 
 ```tsx
 const response = await getOrderDownloads(123);
-const { downloads } = response.toObject(); // AccountDownload[]
+const downloads = response.toObject(); // AccountDownload[]
 ```
 
 ### Get Downloads for a Guest Order
 
 ```tsx
 const response = await getGuestOrderDownloads(123, 'customer@example.com');
-const { downloads } = response.toObject();
+const downloads = response.toObject();
 ```
 
 ### Get All Downloads
@@ -207,7 +210,7 @@ Returns all digital downloads available to the authenticated customer:
 
 ```tsx
 const response = await getDownloads();
-const { downloads } = response.toObject();
+const downloads = response.toObject();
 
 downloads[0].name;                // 'my-ebook-v2.pdf'
 downloads[0].downloads_remaining; // 3, or null when unlimited

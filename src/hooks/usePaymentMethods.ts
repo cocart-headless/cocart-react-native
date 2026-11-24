@@ -9,7 +9,7 @@ interface UsePaymentMethodsOptions {
 }
 
 interface UsePaymentMethodsResult {
-  /** The payment methods for this cart: `{ payment_methods: [...] }`, in the store's order. */
+  /** The payment methods for this cart, as a list in the store's order. */
   methods: CheckoutPaymentMethodsResponse | null;
   /** A logged-in customer's saved payment methods, each with its `label` (empty for a guest). */
   savedCards: SavedPaymentMethod[];

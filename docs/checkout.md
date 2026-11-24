@@ -210,7 +210,7 @@ The payment methods for this cart, in the order the store lists them:
 ```tsx
 const { methods, savedCards, loading } = usePaymentMethods();
 
-methods?.payment_methods.map((method) => method.title);
+methods?.map((method) => method.title);
 // each: id, title, description, supports ({ tokenization, subscriptions… } as true/false), saved_tokens
 ```
 

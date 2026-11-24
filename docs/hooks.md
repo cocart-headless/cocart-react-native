@@ -307,9 +307,9 @@ const {
 | `getOrder` | `(id: number) => Promise<Response>` | Get a single order |
 | `getGuestOrder` | `(id: number, email: string) => Promise<Response>` | Get an order without authentication |
 | `cancelOrder` | `(id: number) => Promise<Response>` | Cancel an order where WooCommerce allows it |
-| `getOrderDownloads` | `(id: number) => Promise<Response>` | Downloads for an order (`GET my-account/orders/{id}/downloads`): `{ downloads: [...] }` |
+| `getOrderDownloads` | `(id: number) => Promise<Response>` | Downloads for an order (`GET my-account/orders/{id}/downloads`), as a list |
 | `getGuestOrderDownloads` | `(id: number, email: string) => Promise<Response>` | Downloads for a guest order, in the same shape |
-| `getDownloads` | `() => Promise<Response>` | All downloads for the customer: `{ downloads: [...] }` |
+| `getDownloads` | `() => Promise<Response>` | All downloads for the customer, as a list |
 | `getReviews` | `(params?: Record<string, string>) => Promise<Response>` | Reviews written by the customer |
 | `verifyEmail` | `(key: string, userId: number) => Promise<Response>` | Confirm a pending email change |
 | `sendOrderEmailVerification` | `() => Promise<Response>` | Email a link that links past guest orders to the account |
@@ -339,7 +339,7 @@ import { createCheckout } from '@cocartheadless/checkout';
 | Hook | Returns | Description |
 |------|---------|-------------|
 | `useCheckout()` | `{ checkout, loading, error, refresh }` | The checkout for the current cart: `items`, `totals`, `total_lines`, `payment`, `customer`, `delivery.packages`. Use it on the review screen: it records the total the customer sees. Updates when `update()` saves a change |
-| `usePaymentMethods({ gateway? })` | `{ methods, savedCards, loading, error, refresh }` | The cart's payment methods (`{ payment_methods: [...] }`, in the store's order), and the customer's saved cards (`SavedPaymentMethod[]`, each with its `label`), in one request |
+| `usePaymentMethods({ gateway? })` | `{ methods, savedCards, loading, error, refresh }` | The cart's payment methods (a list, in the store's order), and the customer's saved cards (`SavedPaymentMethod[]`, each with its `label`), in one request |
 | `useCheckoutMutations()` | `{ update, placeOrder, getCheckoutStatus, payForOrder, confirmReturn }` | Save the customer's details (`result.not_applied` says what wasn't), place the order, find out how a checkout ended, pay for an unpaid order, finish an off-site step |
 | `useOrderReceived(orderId, orderKey)` | `{ order, loading, error, refresh }` | The order, for the thank-you screen. No cart needed |
 | `useCheckoutClient()` | `CheckoutSDK` | The checkout client, for `getCheckoutConfig()`, `searchAddresses()` and `getAddressDetails()` |
